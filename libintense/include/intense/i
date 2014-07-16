@@ -1,0 +1,122 @@
+// ****************************************************************************
+//
+// <i> : C++ templates for libintense.
+//
+// Copyright 2001, 2002 Paul Swoboda.
+//
+// This file is part of the Intense project.
+//
+// Intense is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// Intense is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Intense; if not, write to the Free Software Foundation, Inc.,
+// 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+//
+// ****************************************************************************
+
+
+#ifndef __I__
+#define __I__
+
+
+namespace intense {
+
+
+  // Abstract base class for context base values:
+  template <class C>
+  class i {
+
+  private:
+
+    SetContextDomain domain;
+
+  public:
+
+    i()
+      : domain()
+    {}
+
+    template<class ItemConstructorArg, class ContextConstructorArg>
+    bool insert
+    (const ItemConstructorArg& item, const ContextConstructorArg& context,
+     bool canReplace = true)
+    {
+      C* itemCopyPtr = new C(item);
+      Context* binderPtr = new Version<C>(itemCopyPtr, context);
+      bool returnValue = domain.insert(binderPtr, canReplace);
+      if (!returnValue) {
+        delete binderPtr;
+      }
+      return returnValue;
+    }
+
+    bool remove
+    (const Context& context) const
+    {
+      return domain.remove(&context);
+    }
+
+    template <class ContextConstructorArg>
+    bool remove
+    (const ContextConstructorArg& context)
+    {
+      Context target(context);
+
+      domain.remove(&target);
+    }
+
+    C& best
+    (const Context& context)
+    {
+      return ((Version<C>*)(domain.best(context, true)))->getBound();
+    }
+
+    template <class ContextConstructorArg>
+    C& best
+    (const ContextConstructorArg& contextConstructorArg)
+    {
+      Context requestedContext(contextConstructorArg);
+
+      return ((Version<C>*)(domain.best(requestedContext, true)))->getBound();
+    }
+
+    C& best
+    ()
+    {
+      return best(ContextManager::instance().currentContext());
+    }
+
+    template<class ContextConstructorArg>
+    C& operator()
+    (const ContextConstructorArg& context)
+    {
+      return best(context);
+    }
+
+    C& operator()
+    (const Context& context)
+    {
+      return best(context);
+    }
+
+    void clear
+    ()
+    {
+      domain.clear();
+    }
+
+  };
+
+
+}
+
+
+#endif //  __I__

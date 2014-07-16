@@ -1,0 +1,13 @@
+Java port of C++ libintense
+---------------------------
+
+This is intended to be a near-verbatim port of the core intense library in c++,
+(i.e., not the other way around :-)).  It requires J2SE 1.4 or better, and
+GNU Make.  The JFlex 1.4 jar is included in ext/, but shouldn't be required to
+build (bad form, I know, but what the hey).
+
+Update: A port of all of the C++ tests (minus context interpretation
+in list and context mode, which has been stripped out for the initial
+upload to gna.org) has been done, with the same test bases etc.
+
+Paul

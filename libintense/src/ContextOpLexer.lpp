@@ -1,0 +1,374 @@
+/*
+ ******************************************************************************
+ * ContextOpLexer.lpp : ContextOp lexer
+ *
+ * Copyright 2001, 2002 Paul Swoboda.
+ *
+ * This file is part of the Intense project.
+ *
+ * Intense is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Intense is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Intense; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ *
+ ******************************************************************************
+ */
+
+
+%option c++
+%option yyclass="intense::ContextOpLexer"
+%option 8bit
+
+
+%{
+
+
+#include <list>
+#include <map>
+#include <string>
+#include <sstream>
+#include <stdexcept>
+#include <stdlib.h>
+#include <intense-io.hpp>
+#include "IntenseException.hpp"
+#include "BoundManager.hpp"
+#include "Context.hpp"
+#undef contextop_yyFlexLexer
+#include "NumberBaseValue.hpp"
+#include "StringBaseValue.hpp"
+#include "BinaryBaseValue.hpp"
+#include "AlphaBaseValue.hpp"
+#include "OmegaBaseValue.hpp"
+#include "ContextOpLexer.hpp"
+#include "StringUtil.hpp"
+
+
+#define VERSION_YYSTYPE char *
+#define LVAL ((Context::Token*)lval)
+#define yylex contextop_yylex // flex C++ output screwed...
+
+
+/* This is the global marker for the input buffer: */
+YY_BUFFER_STATE input_buffer;
+/* These are just token-position counters: */
+int characters, token_characters;
+
+
+/* The prototype/definition for our definition of the yywrap() routine: */
+#define contextop_yywrap() 1
+
+
+%}
+
+
+%x IN_STRING AFTER_STRING IN_BINARY_STRING
+
+
+%%
+
+
+<INITIAL>[ \t\r\n]+ {}
+
+<INITIAL>\/\/[^\n]*\n {}
+
+<IN_STRING>\\. {
+  switch ((YYText())[1]) {
+  case 'n':
+    addToString("\n");
+    break;
+  case 't':
+    addToString("\t");
+    break;
+  case 'v':
+    addToString("\v");
+    break;
+  case 'b':
+    addToString("\b");
+    break;
+  case 'r':
+    addToString("\r");
+    break;
+  case 'f':
+    addToString("\f");
+    break;
+  case 'a':
+    addToString("\a");
+    break;
+  case '\\':
+    addToString("\\");
+    break;
+  case '"':
+    addToString("\"");
+    break;
+  default:
+    addToString(&((YYText())[1]));
+    break;
+  }
+  stringBufferRequiresQuotes = true;
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U(00)?(00)?(00)?((0[789a-dA-D])|(5[cC])|(22)|(23)|(20)|(7[eE])|(5[eE])|(2[dD])|(3[cC])|(3[eE])|(5[bB])|(5[dD])|(2[bB])|(3[aA])) {
+  // Reserved Characters:
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + strlen(YYText()) - 2, 1
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferRequiresQuotes = true;
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U(00)?(00)?(00)?(3[0-9]) {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + strlen(YYText()) - 2, 1
+  )] = 0;
+  addToString(utf8Buffer);
+}
+
+<IN_STRING>\\U[a-fA-F0-9][a-fA-F0-9] {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + 2, 1
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9] {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + 2, 2
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9] {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + 2, 3
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9] {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + 2, 4
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\n {
+  return LVAL->setError(*(new string("\\n")));
+}
+
+<IN_STRING>\t {
+  return LVAL->setError(*(new string("\\t")));
+}
+
+<IN_STRING>\v {
+  return LVAL->setError(*(new string("\\v")));
+}
+
+<IN_STRING>\b {
+  return LVAL->setError(*(new string("\\b")));
+}
+
+<IN_STRING>\r {
+  return LVAL->setError(*(new string("\\r")));
+}
+
+<IN_STRING>\f {
+  return LVAL->setError(*(new string("\\f")));
+}
+
+<IN_STRING>\a {
+  return LVAL->setError(*(new string("\\a")));
+}
+
+<IN_STRING>\" {
+  BEGIN(AFTER_STRING);
+}
+
+<IN_STRING>[\#\~\^\-\<\>\[\]\+\: ]+ {
+  addToString(YYText());
+  stringBufferRequiresQuotes = true;
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>[0-9]+ {
+  addToString(YYText());
+}
+
+<IN_STRING>[^\"\#\\\n\t\v\b\r\f\a\~\^\-\<\>\[\]\+\: ]+ {
+  addToString(YYText());
+  stringBufferIsAllIntChars = false;
+}
+
+<AFTER_STRING>[ \t\r\n]+ {
+  continue;
+}
+
+<AFTER_STRING>\" {
+  BEGIN(IN_STRING); continue;
+}
+
+<AFTER_STRING>: {
+  BEGIN(INITIAL);
+  return LVAL->setStringDimension(
+    stringBuffer.str().data(),
+    stringBufferRequiresQuotes||stringBufferIsAllIntChars
+  );
+}
+
+<AFTER_STRING>. {
+  unput((YYText())[0]);
+  BEGIN(INITIAL);
+  return LVAL->setBaseValue(
+    *(new intense::StringBaseValue(stringBuffer.str().data()))
+  );
+}
+
+<INITIAL>\"\" {
+  return LVAL->setBaseValue(*(new intense::StringBaseValue("")));
+}
+
+<INITIAL>\" {
+  stringReset();
+  BEGIN(IN_STRING); continue;
+}
+
+<INITIAL>\# {
+  stringReset();
+  BEGIN(IN_BINARY_STRING); continue;
+}
+
+<IN_BINARY_STRING>([0-9a-fA-F][0-9a-fA-F])+ {
+  addToString((YYText()));
+}
+
+<IN_BINARY_STRING>[ \t\r\n]+ {}
+
+<IN_BINARY_STRING>[^0-9a-fA-F] {
+  unput((YYText())[0]);
+  BEGIN(INITIAL);
+  return LVAL->setBaseValue(*(stringToBinaryBaseValue()));
+}
+
+<INITIAL>\-?[1-9][0-9]*: {
+  int value;
+
+  ((char*)YYText())[strlen(YYText()) - 1] = 0;
+  value = atol(YYText());
+  return LVAL->setIntegerDimension(value);
+}
+
+<INITIAL>[^\"\#\\\n\t\v\b\r\f\a\~\^\-\<\>\[\]\+\: ]+: {
+  ((char*)YYText())[strlen(YYText()) - 1] = 0;
+  return LVAL->setStringDimension(YYText(), false);
+}
+
+<INITIAL>\-?[0-9]+(\.[0-9]+)?([eE][\-\+]?[0-9]+)?[^0-9\.eE:] {
+  double value;
+
+  unput((YYText())[strlen(YYText()) - 1]);
+  ((char*)YYText())[strlen(YYText()) - 1] = 0;
+  value = strtod(YYText(), NULL);
+  return LVAL->setBaseValue(*(new NumberBaseValue(value)));
+}
+
+<INITIAL>[^\"\#\\\n\t\v\b\r\f\a\~\^\-\<\>\[\]\+\: ]+ {
+  return LVAL->setBaseValue(*(new StringBaseValue(YYText())));
+}
+
+<INITIAL>\~ {
+  return LVAL->setBaseValue(*(new AlphaBaseValue()));
+}
+
+<INITIAL>\^ {
+  return LVAL->setBaseValue(*(new OmegaBaseValue()));
+}
+
+<INITIAL>\- {
+  return LVAL->setDash();
+}
+
+<INITIAL>\-\- {
+  return LVAL->setDashDash();
+}
+
+<INITIAL>\-\-\- {
+  return LVAL->setDashDashDash();
+}
+
+<INITIAL>\< {
+  return LVAL->setLAngle();
+}
+
+<INITIAL>\> {
+  return LVAL->setRAngle();
+}
+
+<INITIAL>\[ {
+  return LVAL->setLSquare();
+}
+
+<INITIAL>\] {
+  return LVAL->setRSquare();
+}
+
+<INITIAL>\+ {
+  return LVAL->setPlus();
+}
+
+<INITIAL>[^\-0-9\/\"\#\<\>\[\]\+\:\t\r\n]+ {
+  return LVAL->setError(*(new string(YYText())));
+}
+
+<<EOF>> {
+  return LVAL->setEOF();
+}
+
+
+%%
+
+
+intense::ContextOpLexer::ContextOpLexer
+(istream& is)
+  : yyFlexLexer(&is), stringBuffer(), stringBufferRequiresQuotes(false),
+    stringBufferIsAllIntChars(true)
+{}
+
+
+intense::ContextOpLexer::~ContextOpLexer
+()
+{}
+
+
+// Turn a # hex string into a BinaryBaseValue.
+// We are relying on the rules above to give us an even number of characters
+// in the range [0-9a-fA-F] (which is reasonable):
+intense::BinaryBaseValue* intense::ContextOpLexer::stringToBinaryBaseValue
+()
+{
+  string binaryString = stringBuffer.str();
+  BinaryBaseValue* value = new BinaryBaseValue(binaryString.length()/2);
+  int bytesWritten = StringUtil::hexStringToBinaryString(
+    (char*)(value->content), binaryString.data(), binaryString.length()/2
+  );
+
+  if (bytesWritten != binaryString.length()/2) {
+    throw IntenseException(
+      "INTERNAL ERROR: Invalid byte count in hex conversion"
+    );
+  }
+  return value;
+}

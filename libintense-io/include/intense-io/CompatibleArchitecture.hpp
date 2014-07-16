@@ -1,0 +1,1 @@
+#define INTENSE_IO_COMPATIBLE_ARCHITECTURE BinaryBaseSerialiser::ARCH_unknown

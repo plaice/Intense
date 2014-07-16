@@ -1,0 +1,6 @@
+TYPEMAP
+XSContext*            O_OBJECT
+XSContextOp*          O_OBJECT
+SetContextDomain*     O_OBJECT
+XSContextBinder*      O_OBJECT
+string*               O_OBJECT

@@ -1,0 +1,6 @@
+This is the Perl 5.8.0 wrapper module for the (C++) libintense intensional
+versioning library.  This version of the Perl wrapper requires
+libintense.so.1.0.2 or better, from libintense project version 0.1.0.
+
+Paul Swoboda <gnu AT hackomatic DOT net>
+

@@ -1,0 +1,793 @@
+/*
+ ******************************************************************************
+ * AETPLexer.lpp : Lexer for AETPClient AEPClient::Tokens.
+ *
+ * Copyright 2001, 2004 Paul Swoboda.
+ *
+ * This file is part of the Intense project.
+ *
+ * Intense is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Intense is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Intense; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ *
+ ******************************************************************************
+ */
+
+
+%option prefix="aetp_yy"
+%option c++
+%option yyclass="intense::aep::AETPLexer"
+%option 8bit
+
+
+%{
+
+
+#include <list>
+#include <map>
+#include <queue>
+#include <string>
+#include <sstream>
+#include <stdexcept>
+#include <stdlib.h>
+#include <intense-io.hpp>
+#include <intense.hpp>
+#include "AEPCommon.hpp"
+#include "AEPClient.hpp"
+#include "AEPServer.hpp"
+#include "AETPLexer.hpp"
+
+
+using namespace std;
+using namespace intense;
+using namespace intense::io;
+using namespace intense::aep;
+
+
+/*
+#define VERSION_YYSTYPE char*
+*/
+#define LVAL ((Context::Token*)lval)
+#define CLIENT_LVAL ((AETPClient::LexerToken*)lval)
+#define SERVER_LVAL ((AETPServer::LexerToken*)lval)
+#define yylex aetp_yylex
+
+
+/* The prototype/definition for our definition of the yywrap() routine: */
+#define aetp_yywrap() 1
+
+
+%}
+
+
+%x IN_TOKEN IN_DIMENSION IN_STRING AFTER_STRING
+%x IN_CONTEXT IN_CONTEXT_BINARY_STRING
+
+
+%%
+
+  if (startingNewState) {
+    if (inDimension) {
+      BEGIN(IN_DIMENSION);
+    } else if (inContext) {
+      BEGIN(IN_CONTEXT);
+    } else {
+      BEGIN(IN_TOKEN);
+    }
+    startingNewState = false;
+  }
+
+<INITIAL,IN_TOKEN,IN_DIMENSION,IN_CONTEXT>[ \t\r\n]+ {}
+
+<IN_STRING>\\. {
+  switch ((YYText())[1]) {
+  case 'n':
+    addToString("\n");
+    break;
+  case 't':
+    addToString("\t");
+    break;
+  case 'v':
+    addToString("\v");
+    break;
+  case 'b':
+    addToString("\b");
+    break;
+  case 'r':
+    addToString("\r");
+    break;
+  case 'f':
+    addToString("\f");
+    break;
+  case 'a':
+    addToString("\a");
+    break;
+  case '\\':
+    addToString("\\");
+    break;
+  case '"':
+    addToString("\"");
+    break;
+  default:
+    addToString(&((YYText())[1]));
+    break;
+  }
+  stringBufferRequiresQuotes = true;
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U(00)?(00)?(00)?((0[789a-dA-D])|(5[cC])|(22)|(23)|(20)|(7[eE])|(5[eE])|(2[dD])|(3[cC])|(3[eE])|(5[bB])|(5[dD])|(2[bB])|(3[aA])) {
+  // Reserved Characters:
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + strlen(YYText()) - 2, 1
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferRequiresQuotes = true;
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U(00)?(00)?(00)?(3[0-9]) {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + strlen(YYText()) - 2, 1
+  )] = 0;
+  addToString(utf8Buffer);
+}
+
+<IN_STRING>\\U[a-fA-F0-9][a-fA-F0-9] {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + 2, 1
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9] {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + 2, 2
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9] {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + 2, 3
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\\U[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9] {
+  utf8Buffer[StringUtil::utf8EncodeHex(
+    utf8Buffer, ((char*)(YYText())) + 2, 4
+  )] = 0;
+  addToString(utf8Buffer);
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>\n {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string("\\n")));
+  } else {
+    return SERVER_LVAL->setError(*(new string("\\n")));
+  }
+}
+
+<IN_STRING>\t {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string("\\t")));
+  } else {
+    return SERVER_LVAL->setError(*(new string("\\t")));
+  }
+}
+
+<IN_STRING>\v {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string("\\v")));
+  } else {
+    return SERVER_LVAL->setError(*(new string("\\v")));
+  }
+}
+
+<IN_STRING>\b {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string("\\b")));
+  } else {
+    return SERVER_LVAL->setError(*(new string("\\b")));
+  }
+}
+
+<IN_STRING>\r {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string("\\r")));
+  } else {
+    return SERVER_LVAL->setError(*(new string("\\r")));
+  }
+}
+
+<IN_STRING>\f {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string("\\f")));
+  } else {
+    return SERVER_LVAL->setError(*(new string("\\f")));
+  }
+}
+
+<IN_STRING>\a {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string("\\a")));
+  } else {
+    return SERVER_LVAL->setError(*(new string("\\a")));
+  }
+}
+
+<IN_STRING>\" {
+  BEGIN(AFTER_STRING);
+}
+
+<IN_STRING>[\#\~\^\-\<\>\[\]\+\: ]+ {
+  addToString(YYText());
+  stringBufferRequiresQuotes = true;
+  stringBufferIsAllIntChars = false;
+}
+
+<IN_STRING>[0-9]+ {
+  addToString(YYText());
+}
+
+<IN_STRING>[^\"\#\\\n\t\v\b\r\f\a\~\^\-\<\>\[\]\+\: ]+ {
+  addToString(YYText());
+  stringBufferIsAllIntChars = false;
+}
+
+<AFTER_STRING>[ \t\r\n]+ {
+  continue;
+}
+
+<AFTER_STRING>\" {
+  BEGIN(IN_STRING); continue;
+}
+
+<AFTER_STRING>: {
+  if (inDimension) {
+    BEGIN(IN_DIMENSION);
+    addToCompoundDimension(*(new StringDimension(
+      stringBuffer.str().data(),
+      stringBufferRequiresQuotes||stringBufferIsAllIntChars
+    )));
+  } else if (inContext) {
+    BEGIN(IN_CONTEXT);
+    return LVAL->setStringDimension(
+      stringBuffer.str().data(),
+      stringBufferRequiresQuotes||stringBufferIsAllIntChars
+    );
+  } else {
+    if (type == AETP_CLIENT_LEXER) {
+      return CLIENT_LVAL->setError(*(new string(":")));
+    } else {
+      return SERVER_LVAL->setError(*(new string(":")));
+    }
+  }
+}
+
+<AFTER_STRING>. {
+  unput((YYText())[0]);
+  if (inDimension) {
+    // No ':', so that's the end of the compound dimension:
+    CompoundDimension* dimension = compoundDimension;
+
+    BEGIN(IN_TOKEN);
+    inDimension = false;
+    inContext = false;
+    resetCompoundDimension();
+    if (type == AETP_CLIENT_LEXER) {
+      return CLIENT_LVAL->setCompoundDimension(*dimension);
+    } else {
+      return SERVER_LVAL->setCompoundDimension(*dimension);
+    }
+  } else if (inContext) {
+    BEGIN(IN_CONTEXT);
+    return LVAL->setBaseValue(
+      *(new intense::StringBaseValue(stringBuffer.str().data()))
+    );
+  } else {
+    BEGIN(IN_TOKEN);
+    inDimension = false;
+    inContext = false;
+    if (type == AETP_CLIENT_LEXER) {
+      return CLIENT_LVAL->setText(stringBuffer.str().data());
+    } else {
+      return SERVER_LVAL->setText(stringBuffer.str().data());
+    }
+  }
+}
+
+<IN_TOKEN>\"\" {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setText("");
+  } else {
+    return SERVER_LVAL->setText("");
+  }
+}
+
+<IN_TOKEN>\" {
+  stringReset();
+  BEGIN(IN_STRING);
+  continue;
+}
+
+<IN_TOKEN>\-?[0-9]+ {
+  switch (integersType) {
+  case SEQUENCE:
+    if (type == AETP_CLIENT_LEXER) {
+      return CLIENT_LVAL->setSequence(atoll(YYText()));
+    } else {
+      return SERVER_LVAL->setSequence(atoll(YYText()));
+    }
+    break;
+  case ID:
+    if (type == AETP_CLIENT_LEXER) {
+      return CLIENT_LVAL->setId(atoll(YYText()));
+    } else {
+      return SERVER_LVAL->setId(atoll(YYText()));
+    }
+    break;
+  case COUNT:
+    if (type == AETP_CLIENT_LEXER) {
+      return CLIENT_LVAL->setCount(atoi(YYText()));
+    } else {
+      // Not yet used in server:
+      return SERVER_LVAL->setError(*(new string(YYText())));
+    }
+    break;
+  }
+}
+
+<IN_DIMENSION>[0-9a-zA-Z_]*[a-zA-Z_][0-9a-zA-Z_]*: {
+  ((char*)YYText())[strlen(YYText()) - 1] = 0;
+  addToCompoundDimension(*(new StringDimension(YYText(), false)));
+}
+
+<IN_DIMENSION>\-?[1-9][0-9]*: {
+  int value;
+
+  ((char*)YYText())[strlen(YYText()) - 1] = 0;
+  value = atol(YYText());
+  addToCompoundDimension(*(new IntegerDimension(value)));
+}
+
+<IN_DIMENSION>[0-9a-zA-Z_]*[a-zA-Z_][0-9a-zA-Z_]* {
+  CompoundDimension* dimension;
+
+  addToCompoundDimension(*(new StringDimension(YYText(), false)));
+  dimension = compoundDimension;
+  BEGIN(IN_TOKEN);
+  inDimension = false;
+  resetCompoundDimension();
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setCompoundDimension(*dimension);
+  } else {
+    return SERVER_LVAL->setCompoundDimension(*dimension);
+  }
+}
+
+<IN_DIMENSION>\-?[1-9][0-9]* {
+  CompoundDimension* dimension;
+  int value;
+
+  value = atol(YYText());
+  addToCompoundDimension(*(new IntegerDimension(value)));
+  dimension = compoundDimension;
+  BEGIN(IN_TOKEN);
+  inDimension = false;
+  resetCompoundDimension();
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setCompoundDimension(*dimension);
+  } else {
+    return SERVER_LVAL->setCompoundDimension(*dimension);
+  }
+}
+
+<IN_DIMENSION>\" {
+  BEGIN(IN_STRING);
+}
+
+<INITIAL>SYNCH {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  } else {
+    BEGIN(IN_TOKEN);
+    return SERVER_LVAL->setSynch();
+  }
+}
+
+<INITIAL>DISCONNECT {
+  BEGIN(IN_TOKEN);
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setServerDisconnect();
+  } else {
+    return SERVER_LVAL->setClientDisconnect();
+  }
+}
+
+<INITIAL>NOTIFY {
+  if (type == AETP_CLIENT_LEXER) {
+    BEGIN(IN_TOKEN);
+    return CLIENT_LVAL->setNotify();
+  } else {
+    return SERVER_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<IN_TOKEN>NOTIFY {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  } else {
+    return SERVER_LVAL->setNotify();
+  }
+}
+
+<INITIAL,IN_TOKEN>ASSIGN {
+  BEGIN(IN_TOKEN);
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setAssign();
+  } else {
+    return SERVER_LVAL->setAssign();
+  }
+}
+
+<INITIAL,IN_TOKEN>APPLY {
+  BEGIN(IN_TOKEN);
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setApply();
+  } else {
+    return SERVER_LVAL->setApply();
+  }
+}
+
+<INITIAL,IN_TOKEN>CLEAR {
+  BEGIN(IN_TOKEN);
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setClear();
+  } else {
+    return SERVER_LVAL->setClear();
+  }
+}
+
+<INITIAL,IN_TOKEN>KICK {
+  BEGIN(IN_TOKEN);
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setKick();
+  } else {
+    return SERVER_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<INITIAL>ACK {
+  BEGIN(IN_TOKEN);
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setAck();
+  } else {
+    return SERVER_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<INITIAL>DENY {
+  BEGIN(IN_TOKEN);
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setDeny();
+  } else {
+    return SERVER_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<IN_TOKEN,IN_CONTEXT>\; {
+  BEGIN(INITIAL);
+  inDimension = false;
+  inContext = false;
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setBreak();
+  } else {
+    return SERVER_LVAL->setBreak();
+  }
+}
+
+<INITIAL>JOIN {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  } else {
+    BEGIN(IN_TOKEN);
+    return SERVER_LVAL->setJoin();
+  }
+}
+
+<INITIAL>LEAVE {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  } else {
+    BEGIN(IN_TOKEN);
+    return SERVER_LVAL->setLeave();
+  }
+}
+
+<IN_TOKEN>CONTEXT {
+  BEGIN(IN_CONTEXT);
+  // So we can reuse the string rules:
+  inContext = true;
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  } else {
+    return SERVER_LVAL->setContextKeyword();
+  }
+}
+
+<IN_TOKEN>OP {
+  BEGIN(IN_CONTEXT);
+  // So we can reuse the string rules:
+  inContext = true;
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  } else {
+    return SERVER_LVAL->setOpKeyword();
+  }
+}
+
+<IN_TOKEN>DIM {
+  BEGIN(IN_DIMENSION);
+  // So we can reuse the string rules:
+  inDimension = true;
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setDimKeyword();
+  } else {
+    return SERVER_LVAL->setDimKeyword();
+  }
+}
+
+<IN_TOKEN>ROOT {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setRootKeyword();
+  } else {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<IN_TOKEN>EXT {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setExternalKeyword();
+  } else {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<IN_TOKEN>INT {
+  if (type == AETP_CLIENT_LEXER) {
+    return CLIENT_LVAL->setInternalKeyword();
+  } else {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<IN_TOKEN>PREFENCE {
+  if (type == AETP_SERVER_LEXER) {
+    return SERVER_LVAL->setPreFence();
+  } else {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<IN_TOKEN>POSTFENCE {
+  if (type == AETP_SERVER_LEXER) {
+    return SERVER_LVAL->setPostFence();
+  } else {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<IN_TOKEN>SELF {
+  if (type == AETP_SERVER_LEXER) {
+    return SERVER_LVAL->setSelf();
+  } else {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<IN_TOKEN>CLIENT {
+  if (type == AETP_SERVER_LEXER) {
+    return SERVER_LVAL->setClient();
+  } else {
+    return CLIENT_LVAL->setError(*(new string(YYText())));
+  }
+}
+
+<INITIAL>[^ \-0-9A-Z\"\:\t\r\n]+ {
+  return LVAL->setError(*(new string(YYText())));
+}
+
+<IN_CONTEXT>\"\" {
+  return LVAL->setBaseValue(*(new intense::StringBaseValue("")));
+}
+
+<IN_CONTEXT>\" {
+  stringReset();
+  BEGIN(IN_STRING); continue;
+}
+
+<IN_CONTEXT>\# {
+  stringReset();
+  BEGIN(IN_CONTEXT_BINARY_STRING); continue;
+}
+
+<IN_CONTEXT_BINARY_STRING>([0-9a-fA-F][0-9a-fA-F])+ {
+  addToString((YYText()));
+}
+
+<IN_CONTEXT_BINARY_STRING>[ \t\r\n]+ {}
+
+<IN_CONTEXT_BINARY_STRING>[^0-9a-fA-F] {
+  unput((YYText())[0]);
+  BEGIN(INITIAL);
+  return LVAL->setBaseValue(*(stringToBinaryBaseValue()));
+}
+
+<IN_CONTEXT>\-?[1-9][0-9]*: {
+  int value;
+
+  ((char*)YYText())[strlen(YYText()) - 1] = 0;
+  value = atol(YYText());
+  return LVAL->setIntegerDimension(value);
+}
+
+<IN_CONTEXT>[^\"\#\\\n\t\v\b\r\f\a\~\^\-\<\>\[\]\+\: ]+: {
+  ((char*)YYText())[strlen(YYText()) - 1] = 0;
+  return LVAL->setStringDimension(YYText(), false);
+}
+
+<IN_CONTEXT>\-?[0-9]+(\.[0-9]+)?([eE][\-\+]?[0-9]+)?[^0-9\.eE:] {
+  double value;
+
+  unput((YYText())[strlen(YYText()) - 1]);
+  ((char*)YYText())[strlen(YYText()) - 1] = 0;
+  value = strtod(YYText(), NULL);
+  return LVAL->setBaseValue(*(new NumberBaseValue(value)));
+}
+
+<IN_CONTEXT>[^\"\#\\\n\t\v\b\r\f\a\~\^\-\<\>\[\]\+\: ]+ {
+  return LVAL->setBaseValue(*(new StringBaseValue(YYText())));
+}
+
+<IN_CONTEXT>\~ {
+  return LVAL->setBaseValue(*(new AlphaBaseValue()));
+}
+
+<IN_CONTEXT>\^ {
+  return LVAL->setBaseValue(*(new OmegaBaseValue()));
+}
+
+<IN_CONTEXT>\- {
+  return LVAL->setDash();
+}
+
+<IN_CONTEXT>\-\- {
+  return LVAL->setDashDash();
+}
+
+<IN_CONTEXT>\-\-\- {
+  return LVAL->setDashDashDash();
+}
+
+<IN_CONTEXT>\< {
+  return LVAL->setLAngle();
+}
+
+<IN_CONTEXT>\> {
+  return LVAL->setRAngle();
+}
+
+<IN_CONTEXT>\[ {
+  return LVAL->setLSquare();
+}
+
+<IN_CONTEXT>\] {
+  return LVAL->setRSquare();
+}
+
+<IN_CONTEXT>\+ {
+  return LVAL->setPlus();
+}
+
+<IN_CONTEXT>[^\"\#\<\>\[\]\+\:\t\r\n]+ {
+  return LVAL->setError(*(new string(YYText())));
+}
+
+<<EOF>> {
+  return LVAL->setEOF();
+}
+
+
+%%
+
+
+AETPLexer::AETPLexer
+(istream& is, Type type_)
+  : yyFlexLexer(&is), stringBuffer(), compoundDimension(NULL),
+    startingNewState(false), inDimension(false), inContext(false),
+    integersType(SEQUENCE), type(type_)
+{}
+
+
+AETPLexer::~AETPLexer
+()
+{
+  if (compoundDimension != NULL) {
+    delete compoundDimension;
+  }
+}
+
+
+int AETPLexer::getToken
+(Context::Token& token)
+{
+  int returnValue;
+
+  lval = (void*)&token;
+  returnValue = aetp_yylex();
+  if (returnValue == Context::Token::ERROR) {
+    ostringstream oss;
+
+    if (token.value.errorText != NULL) {
+      oss << "Parsed error token in AETPLexer with content \""
+          << *(token.value.errorText) << "\"";
+    } else {
+      oss << "Parsed error token in AETPLexer (NULL content)";
+    }
+    throw AEPException(oss.str());
+  }
+  return returnValue;
+}
+
+
+// Turn a # hex string into a BinaryBaseValue.
+// We are relying on the rules above to give us an even number of characters
+// in the range [0-9a-fA-F] (which is reasonable):
+intense::BinaryBaseValue* AETPLexer::stringToBinaryBaseValue()
+{
+  BinaryBaseValue* value;
+  char* marker;
+  unsigned char* targetMarker;
+  string binaryString = stringBuffer.str();
+
+  value = new BinaryBaseValue(binaryString.length() / 2);
+  targetMarker = (unsigned char*)(value->content);
+  marker = (char*)(binaryString.data());
+  while ((marker - binaryString.data()) < binaryString.length()) {
+    unsigned char character;
+    if ((*marker >= '0')&&(*marker <= '9')) {
+      character = (*marker - '0') << 4;
+    } else if ((*marker >= 'a')&&(*marker <= 'f')) {
+      character = (*marker - 'a' + 10) << 4;
+    } else if ((*marker >= 'A')&&(*marker <= 'F')) {
+      character = (*marker - 'A' + 10) << 4;
+    }
+    marker++;
+    if ((*marker >= '0')&&(*marker <= '9')) {
+      character += *marker - '0';
+    } else if ((*marker >= 'a')&&(*marker <= 'f')) {
+      character += *marker - 'a' + 10;
+    } else if ((*marker >= 'A')&&(*marker <= 'F')) {
+      character += *marker - 'A' + 10;
+    }
+    marker++;
+    *targetMarker++ = character;
+  }
+  return value;
+}

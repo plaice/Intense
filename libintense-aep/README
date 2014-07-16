@@ -1,0 +1,9 @@
+Intense-AEP is a library implenting version 2 of the AEther Protocol.
+AEP is a protocol for distribution and sharing of hierarchical
+intensional contexts, as supplied by Intense.
+
+Note: A bug in Fedora's pthreads implementation which screws up
+deferred cancellation prevents this implementation from working on
+Fedora and probably "Enterprise" RedHat... try Gentoo ;-).
+
+Paul

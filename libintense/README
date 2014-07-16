@@ -1,0 +1,14 @@
+Intense is a library of routines created to support intensional programming.
+Intense supports the creation of tree-structured contexts, and their
+manipulation using similar, tree-structured context operations.
+
+Libintense was designed and written by Paul Swoboda, and has as its origins
+a paper entitled A New Approach to Version Control, by John Plaice and
+Bill Wadge, in IEEE Transactions on Software Engineering, March 1993.
+
+Intense is an extended reimplementation of a previous libintense, also
+written by Paul Swoboda, which was used as the basis for the Perl-like
+scripting language ISE (Intensional Sequential Evaluator), and for
+Intensional HTML.  In turn, this former work was itself a generalization
+of previous tools by Gordon Brown and Taner Yildirim.  All of this
+earlier work was undertaken at the University of Victoria, BC, Canada.

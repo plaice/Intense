@@ -1,0 +1,20 @@
+autoscan: warning: missing AC_HEADER_STDBOOL wanted by: 
+	tests/Test.hpp:76
+	tests/IntenseSerialTest.cpp:309
+	src/BinaryBaseSerialiser.cpp:191
+	src/BinaryBaseSerialiser.cpp:198
+	src/XDRBaseSerialiser.cpp:238
+	src/XDRBaseSerialiser.cpp:249
+	src/ASCIIBaseSerialiser.cpp:177
+	src/ASCIIBaseSerialiser.cpp:184
+	include/BinaryBaseSerialiser.hpp:94
+	include/BinaryBaseSerialiser.hpp:97
+	include/XDRBaseSerialiser.hpp:95
+	include/XDRBaseSerialiser.hpp:98
+	include/ASCIIBaseSerialiser.hpp:98
+	include/ASCIIBaseSerialiser.hpp:101
+	include/BaseSerialiser.hpp:106
+	include/BaseSerialiser.hpp:109
+	tests/Test.hpp:84
+	tests/Test.cpp:61
+	tests/IntenseSerialTest.cpp:72
