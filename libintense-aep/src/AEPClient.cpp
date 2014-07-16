@@ -32,6 +32,7 @@
 #include <iostream>
 #include <errno.h>
 #include <intense.hpp>
+#define yyFlexParser aetp_yyFlexParser
 #include <FlexLexer.h>
 #include "AETPLexer.hpp"
 #include "AEPCommon.hpp"

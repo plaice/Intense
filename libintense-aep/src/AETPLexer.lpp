@@ -716,6 +716,11 @@ using namespace intense::aep;
 
 %%
 
+int
+yyFlexLexer::yywrap()
+{
+  return aetp_yywrap();
+}
 
 AETPLexer::AETPLexer
 (istream& is, Type type_)

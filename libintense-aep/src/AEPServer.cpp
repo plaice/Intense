@@ -26,6 +26,7 @@
 #include <intense/container_stringtok.hpp>
 #include <intense.hpp>
 #include <queue>
+#define yyFlexParser aetp_yyFlexParser
 #include <FlexLexer.h>
 #include "AETPLexer.hpp"
 #include "AEPCommon.hpp"

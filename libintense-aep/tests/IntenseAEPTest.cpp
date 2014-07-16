@@ -28,6 +28,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <errno.h>
+#include <intense.hpp>
+#define yyFlexParser aetp_yyFlexParser
+#include <FlexLexer.h>
+#include "AETPLexer.hpp"
 #include <intense-aep.hpp>
 #include "Test.hpp"
 #include "IntenseAEPTest.hpp"
