@@ -26,7 +26,6 @@
 #ifndef __AEPCLIENT_HPP__
 #define __AEPCLIENT_HPP__
 
-
 namespace intense {
 
 
@@ -64,20 +63,20 @@ namespace intense {
 
       public:
 
-        long long join
+        long join
         (AEPClient& newClient, bool notify,
          const CompoundDimension* dimension = NULL,
          pthread_cond_t* optionalBlockCondition = NULL);
 
-        long long join
+        long join
         (AEPClient& newClient, bool notify, const char* dimension,
          pthread_cond_t* optionalBlockCondition = NULL);
 
-        long long join
+        long join
         (bool notify, const CompoundDimension* dimension = NULL,
          pthread_cond_t* optionalBlockCondition = NULL);
 
-        long long join
+        long join
         (bool notify, const char* dimension,
          pthread_cond_t* optionalBlockCondition = NULL);
 
@@ -89,145 +88,145 @@ namespace intense {
 
       private:
 
-        long long join
+        long join
         (AEPClient* newClient, bool notify, const CompoundDimension* dimension,
          pthread_cond_t* blockCondition);
 
       public:
 
-        long long leave
+        long leave
         (pthread_cond_t* blockCondition = NULL);
 
-        long long assign
+        long assign
         (const Context& context)
         {
           return assign(context, (const CompoundDimension*)NULL, 0, NULL);
         }
 
-        virtual long long assign
+        virtual long assign
         (const Context& context, const CompoundDimension* dim)
         {
           return assign(context, dim, 0, NULL);
         }
 
-        virtual long long assign
+        virtual long assign
         (const Context& context, const CompoundDimension* dim, int flags)
         {
           return assign(context, dim, flags, NULL);
         }
 
-        virtual long long assign
+        virtual long assign
         (const Context& context, const char* dim)
         {
           return assign(context, dim, 0, NULL);
         }
 
-        virtual long long assign
+        virtual long assign
         (const Context& context, const char* dim, int flags)
         {
           return assign(context, dim, flags, NULL);
         }
 
-        virtual long long assign
+        virtual long assign
         (const Context& context, const char* dim, int flags,
          pthread_cond_t* blockCondition);
 
-        virtual long long assign
+        virtual long assign
         (const Context& context, const CompoundDimension* dim, int flags,
          pthread_cond_t* blockCondition);
 
-        virtual long long apply
+        virtual long apply
         (const ContextOp& op)
         {
           return apply(op, (const CompoundDimension*)NULL, 0, NULL);
         }
 
-        virtual long long apply
+        virtual long apply
         (const ContextOp& op, const CompoundDimension* dim)
         {
           return apply(op, dim, 0, NULL);
         }
 
-        virtual long long apply
+        virtual long apply
         (const ContextOp& op, const CompoundDimension* dim, int flags)
         {
           return apply(op, dim, flags, NULL);
         }
 
-        virtual long long apply
+        virtual long apply
         (const ContextOp& op, const char* dim)
         {
           return apply(op, dim, 0, NULL);
         }
 
-        virtual long long apply
+        virtual long apply
         (const ContextOp& op, const char* dim, int flags)
         {
           return apply(op, dim, flags, NULL);
         }
 
-        virtual long long apply
+        virtual long apply
         (const ContextOp& op, const char* dim, int flags,
          pthread_cond_t* blockCondition);
 
-        virtual long long apply
+        virtual long apply
         (const ContextOp& op, const CompoundDimension* dim, int flags,
          pthread_cond_t* blockCondition);
 
-        virtual long long clear
+        virtual long clear
         ()
         {
           return clear((const CompoundDimension*)NULL, 0, NULL);
         }
 
-        virtual long long clear
+        virtual long clear
         (const CompoundDimension* dim)
         {
           return clear(dim, 0, NULL);
         }
 
-        virtual long long clear
+        virtual long clear
         (const CompoundDimension* dim, int flags)
         {
           return clear(dim, flags, NULL);
         }
 
-        virtual long long clear
+        virtual long clear
         (const char* dim)
         {
           return clear(dim, 0, NULL);
         }
 
-        virtual long long clear
+        virtual long clear
         (const char* dim, int flags)
         {
           return clear(dim, flags, NULL);
         }
 
-        virtual long long clear
+        virtual long clear
         (const char* dim, int flags, pthread_cond_t* blockCondition);
 
-        virtual long long clear
+        virtual long clear
         (const CompoundDimension* dim, int flags,
          pthread_cond_t* blockCondition);
 
-        virtual long long synch
+        virtual long synch
         ()
         {
           return synch((pthread_cond_t*)NULL);
         }
 
-        virtual long long synch
+        virtual long synch
         (pthread_cond_t* blockCondition);
 
         virtual void synch
-        (long long serverSequence)
+        (long serverSequence)
         {
           return synch(serverSequence, NULL);
         }
 
         virtual void synch
-        (long long serverSequence, pthread_cond_t* blockCondition);
+        (long serverSequence, pthread_cond_t* blockCondition);
 
       private:
 
@@ -246,7 +245,7 @@ namespace intense {
 
         AEPClient* client;
 
-        long long serverSequence;
+        long serverSequence;
 
       public:
 
@@ -272,7 +271,7 @@ namespace intense {
         }
 
         Token
-        (long long serverSequence_)
+        (long serverSequence_)
           : client(NULL), serverSequence(serverSequence_)
         {}
 
@@ -300,7 +299,7 @@ namespace intense {
           client = &client_;
         }
 
-        long long getServerSequence
+        long getServerSequence
         ()
         {
           return serverSequence;
@@ -366,7 +365,7 @@ namespace intense {
         {}
 
         ServerDisconnectToken
-        (long long serverSequence_)
+        (long serverSequence_)
           : Token(serverSequence_)
         {}
 
@@ -416,7 +415,7 @@ namespace intense {
 
           static const char* typeStrings[];
 
-          long long participantId;
+          long participantId;
 
           virtual Type getType
           () = 0;
@@ -465,7 +464,7 @@ namespace intense {
         protected:
 
           Target
-          (long long participantId_)
+          (long participantId_)
             : participantId(participantId_)
           {}
 
@@ -498,13 +497,13 @@ namespace intense {
           {}
 
           AssignTarget
-          (long long participantId, int contextNodeIndex_)
+          (long participantId, int contextNodeIndex_)
             : Target(participantId), contextNodeIndex(contextNodeIndex_),
               dimension(NULL), dimensionIsExternal(false), assignToken(NULL)
           {}
 
           AssignTarget
-          (long long participantId, int contextNodeIndex_,
+          (long participantId, int contextNodeIndex_,
            CompoundDimension& dimension_, bool dimensionIsExternal_)
             : Target(participantId), contextNodeIndex(contextNodeIndex_),
               // Copy pointer directly - it's freshly allocated in addNode():
@@ -563,13 +562,13 @@ namespace intense {
           {}
 
           ApplyTarget
-          (long long participantId, int opNodeIndex_)
+          (long participantId, int opNodeIndex_)
             : Target(participantId), opNodeIndex(opNodeIndex_),
               dimension(NULL), dimensionIsExternal(false), applyToken(NULL)
           {}
 
           ApplyTarget
-          (long long participantId, int opNodeIndex_,
+          (long participantId, int opNodeIndex_,
            CompoundDimension& dimension_, bool dimensionIsExternal_)
             : Target(participantId), opNodeIndex(opNodeIndex_),
               // Copy pointer directly - it's freshly allocated in addNode():
@@ -621,12 +620,12 @@ namespace intense {
           {}
 
           ClearTarget
-          (long long participantId)
+          (long participantId)
             : Target(participantId), dimension(NULL)
           {}
 
           ClearTarget
-          (long long participantId, CompoundDimension& dimension_)
+          (long participantId, CompoundDimension& dimension_)
             : Target(participantId),
               dimension(new CompoundDimension(dimension_))
           {}
@@ -670,7 +669,7 @@ namespace intense {
           {}
 
           KickTarget
-          (long long participantId)
+          (long participantId)
             : Target(participantId)
           {}
 
@@ -717,7 +716,7 @@ namespace intense {
         {}
 
         NotifyToken
-        (long long serverSequence_)
+        (long serverSequence_)
           : Token(serverSequence_), targets(), nodes()
         {}
 
@@ -777,7 +776,7 @@ namespace intense {
 
       protected:
 
-        long long clientSequence;
+        long clientSequence;
 
         std::string* message;
 
@@ -789,7 +788,7 @@ namespace intense {
         {}
 
         ReplyToken
-        (long long serverSequence_, long clientSequence_, std::string* message_)
+        (long serverSequence_, long clientSequence_, std::string* message_)
           : Token(serverSequence_), clientSequence(clientSequence_),
             message(message_)
         {}
@@ -806,7 +805,7 @@ namespace intense {
           return ACK;
         }
 
-        long long getClientSequence
+        long getClientSequence
         ()
         {
           return clientSequence;
@@ -840,7 +839,7 @@ namespace intense {
         {}
 
         AckToken
-        (long long serverSequence, long long clientSequence,
+        (long serverSequence, long clientSequence,
          std::string* message = NULL)
           : ReplyToken(serverSequence, clientSequence, message)
         {}
@@ -883,7 +882,7 @@ namespace intense {
         {}
 
         DenyToken
-        (long long serverSequence, long long clientSequence,
+        (long serverSequence, long clientSequence,
          std::string* message = NULL)
           : ReplyToken(serverSequence, clientSequence, message)
         {}
@@ -926,7 +925,7 @@ namespace intense {
         {}
 
         ErrorToken
-        (long long serverSequence, long long clientSequence,
+        (long serverSequence, long clientSequence,
          std::string* message = NULL)
           : ReplyToken(serverSequence, clientSequence, message)
         {}
@@ -968,7 +967,7 @@ namespace intense {
 
         friend class SequenceBinderMap;
 
-        long long sequence;
+        long sequence;
 
         bool terminate;
 
@@ -981,7 +980,7 @@ namespace intense {
       public:
 
         SequenceBinder
-        (long long sequence, bool terminate, pthread_cond_t* condition);
+        (long sequence, bool terminate, pthread_cond_t* condition);
 
         ~SequenceBinder
         ();
@@ -990,7 +989,7 @@ namespace intense {
 
 
       class SequenceBinderMap
-        : protected std::map<long long, SequenceBinder*> {
+        : protected std::map<long, SequenceBinder*> {
 
         AEPClient* client;
 
@@ -998,13 +997,13 @@ namespace intense {
 
         SequenceBinderMap
         (AEPClient& client_)
-          : std::map<long long, SequenceBinder*>(), client(&client_)
+          : std::map<long, SequenceBinder*>(), client(&client_)
         {}
 
         // client->lock() must be acquired prior to call, and is reacquired,
         // after call:
         ReplyToken* wait
-        (long long sequence, bool terminate = false,
+        (long sequence, bool terminate = false,
          pthread_cond_t* condition = NULL);
 
         // client->lock() must be acquired prior to call.  Returns a bool
@@ -1020,7 +1019,7 @@ namespace intense {
         // client->lock() must be acquired prior to call.  Returns a bool
         // indicating whether the client ear is to continue running:
         bool resumeUntil
-        (long long sequence);
+        (long sequence);
 
       };
 
@@ -1037,9 +1036,9 @@ namespace intense {
 
       // Clients keep their own sequence; Servers get their sequence from their
       // AEther.
-      long long sequence;
+      long sequence;
 
-      long long serverSequence;
+      long serverSequence;
 
       SequenceBinderMap clientSequenceBinderMap;
 
@@ -1062,7 +1061,7 @@ namespace intense {
       pthread_cond_t receiverQueueCondition;
 
       // Assumes lock has been acquired:
-      long long nextSequence
+      long nextSequence
       ()
       {
         return sequence++;
@@ -1081,7 +1080,7 @@ namespace intense {
        bool useReceiverThread, int maxReceiveSize);
 
       ReplyToken* waitForReply
-      (long long clientSequence, const char* location, bool terminate,
+      (long clientSequence, const char* location, bool terminate,
        pthread_cond_t* optionalBlockCondition);
 
       static void earCleanupHandler
@@ -1100,7 +1099,7 @@ namespace intense {
       (Token* token);
 
       // Assumes client has been locked and unlocks it before returning:
-      long long transaction
+      long transaction
       (AEPCommon::Token* outgoing_, bool allowDeny, bool terminate,
        pthread_cond_t* blockCondition);
 
@@ -1113,37 +1112,37 @@ namespace intense {
       // These have the same effect as assign, apply and clear operations on
       // a root-node participant:
 
-      virtual long long assign
+      virtual long assign
       (const Context& context, const CompoundDimension* dim = NULL,
        int flags = 0, pthread_cond_t* blockCondition = NULL);
 
-      virtual long long apply
+      virtual long apply
       (const ContextOp& op, const CompoundDimension* dim = NULL,
        int flags = 0, pthread_cond_t* blockCondition = NULL);
 
-      virtual long long clear
+      virtual long clear
       (const CompoundDimension* dim = NULL, int flags = 0,
        pthread_cond_t* blockCondition = NULL);
 
-      virtual long long synch
+      virtual long synch
       (pthread_cond_t* blockCondition);
 
       virtual void synch
-      (long long serverSequence, pthread_cond_t* blockCondition);
+      (long serverSequence, pthread_cond_t* blockCondition);
 
-      long long getServerSequence
+      long getServerSequence
       ()
       {
         return serverSequence;
       }
 
-      virtual long long disconnect
+      virtual long disconnect
       ()
       {
         return disconnect(NULL);
       }
 
-      virtual long long disconnect
+      virtual long disconnect
       (pthread_cond_t* blockCondition);
 
       void start
@@ -1351,8 +1350,8 @@ namespace intense {
         // add 8 bytes to these tokens:
         union {
           int count;
-          long long id;
-          long long sequence;
+          long id;
+          long sequence;
           CompoundDimension* compoundDimension;
           std::string* text;
         } aetpValue;
@@ -1436,14 +1435,14 @@ namespace intense {
         }
 
         int setId
-        (long long id)
+        (long id)
         {
           aetpValue.id = id;
           return type = ID;
         }
 
         int setSequence
-        (long long sequence)
+        (long sequence)
         {
           aetpValue.sequence = sequence;
           return type = SEQUENCE;
@@ -1493,11 +1492,11 @@ namespace intense {
     private:
 
       void readSequence
-      (LexerToken& lexerToken, long long& dest, const char* sequenceName,
+      (LexerToken& lexerToken, long& dest, const char* sequenceName,
        LexerToken::Type inTokenType);
 
       void readParticipantId
-      (LexerToken& lexerToken, long long& dest, LexerToken::Type inTokenType);
+      (LexerToken& lexerToken, long& dest, LexerToken::Type inTokenType);
 
       void throwBadLexerToken
       (LexerToken& token, LexerToken::Type inTokenType);

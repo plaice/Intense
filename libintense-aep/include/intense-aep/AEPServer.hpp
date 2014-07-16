@@ -136,7 +136,7 @@ namespace intense {
         };
 
 
-        long long serverSequence;
+        long serverSequence;
 
         pthread_t thread;
 
@@ -192,7 +192,7 @@ namespace intense {
         void unlock
         ();
 
-        virtual long long nextServerSequence
+        virtual long nextServerSequence
         ()
         {
           return serverSequence++;
@@ -244,7 +244,7 @@ namespace intense {
       protected:
 
         Participant
-        (AEPServer& server_, long long id, io::Log* log = NULL,
+        (AEPServer& server_, long id, io::Log* log = NULL,
          io::Log::Priority logLevel = io::Log::NOTICE)
           : AEPCommon::Participant(
               id, ((log == NULL) ? server_.log : log), logLevel
@@ -258,7 +258,7 @@ namespace intense {
         virtual void join
         (intense::AEther& a);
 
-        virtual long long assign
+        virtual long assign
         (const Context& context, const CompoundDimension* dim);
 
         AEther::Origin& getNotificationOrigin
@@ -267,13 +267,13 @@ namespace intense {
         virtual void assignNotify
         (const Context& value, const CompoundDimension* dim, Origin* origin);
 
-        virtual long long apply
+        virtual long apply
         (const ContextOp& op, const CompoundDimension* dim);
 
         virtual void applyNotify
         (const ContextOp& o, const CompoundDimension* dim, Origin* origin);
 
-        virtual long long clear
+        virtual long clear
         (const CompoundDimension* dim);
 
         virtual void clearNotify
@@ -306,9 +306,9 @@ namespace intense {
 
         AEPServer* server;
 
-        long long clientSequence;
+        long clientSequence;
 
-        long long serverSequence;
+        long serverSequence;
 
       public:
 
@@ -335,7 +335,7 @@ namespace intense {
         }
 
         Token
-        (long long clientSequence_)
+        (long clientSequence_)
           : server(NULL), clientSequence(clientSequence_), serverSequence(-1)
         {}
 
@@ -366,13 +366,13 @@ namespace intense {
           server = &server_;
         }
 
-        long long getClientSequence
+        long getClientSequence
         ()
         {
           return clientSequence;
         }
 
-        long long getServerSequence
+        long getServerSequence
         ()
         {
           return serverSequence;
@@ -394,7 +394,7 @@ namespace intense {
         {}
 
         SynchronousToken
-        (long long clientSequence)
+        (long clientSequence)
           : Token(clientSequence), reply(NULL)
         {}
 
@@ -429,7 +429,7 @@ namespace intense {
         {}
 
         SynchToken
-        (long long clientSequence_)
+        (long clientSequence_)
           : SynchronousToken(clientSequence_)
         {}
 
@@ -478,7 +478,7 @@ namespace intense {
         {}
 
         ClientDisconnectToken
-        (long long clientSequence_)
+        (long clientSequence_)
           : SynchronousToken(clientSequence_)
         {}
 
@@ -519,7 +519,7 @@ namespace intense {
         friend class AEPServer;
         friend class AEther;
 
-        long long participantId;
+        long participantId;
 
         bool notify;
 
@@ -536,7 +536,7 @@ namespace intense {
         {}
 
         JoinToken
-        (long long clientSequence_, long long participantId_,
+        (long clientSequence_, long participantId_,
          bool notify_, CompoundDimension* dimension_)
           : SynchronousToken(clientSequence_), participantId(participantId_),
             notify(notify_),
@@ -582,7 +582,7 @@ namespace intense {
         friend class AEPServer;
         friend class AEther;
 
-        long long participantId;
+        long participantId;
 
         Participant* participant;
 
@@ -594,7 +594,7 @@ namespace intense {
         {}
 
         LeaveToken
-        (long long clientSequence_, long long participantId_)
+        (long clientSequence_, long participantId_)
           : SynchronousToken(clientSequence_), participantId(participantId_)
         {}
 
@@ -639,7 +639,7 @@ namespace intense {
 
         friend class AEPServer;
 
-        long long participantId;
+        long participantId;
 
       public:
 
@@ -649,7 +649,7 @@ namespace intense {
         {}
 
         KickToken
-        (long long clientSequence_, long long participantId_)
+        (long clientSequence_, long participantId_)
           : SynchronousToken(clientSequence_), participantId(participantId_)
         {}
 
@@ -734,7 +734,7 @@ namespace intense {
         (int initialRefCount = 1);
 
         AsynchronousToken
-        (CompoundDimension* dimension_, long long clientSequence, int flags_,
+        (CompoundDimension* dimension_, long clientSequence, int flags_,
          int initialRefCount = 1);
 
         virtual ~AsynchronousToken
@@ -792,7 +792,7 @@ namespace intense {
 
         Context* context;
 
-        long long participantId;
+        long participantId;
 
       public:
 
@@ -803,7 +803,7 @@ namespace intense {
         {}
 
         AssignToken
-        (long long clientSequence, long long participantId_,
+        (long clientSequence, long participantId_,
          const Context& context_, CompoundDimension* dimension, int flags = 0,
          int initialRefCount = 1)
           : AsynchronousToken(
@@ -813,7 +813,7 @@ namespace intense {
         {}
 
         AssignToken
-        (long long clientSequence, long long participantId_,
+        (long clientSequence, long participantId_,
          const Context* context_, CompoundDimension* dimension, int flags = 0,
          int initialRefCount = 1)
           : AsynchronousToken(
@@ -864,7 +864,7 @@ namespace intense {
 
       protected:
 
-        long long participantId;
+        long participantId;
 
         ContextOp* op;
 
@@ -876,7 +876,7 @@ namespace intense {
         {}
 
         ApplyToken
-        (long long clientSequence, long long participantId_,
+        (long clientSequence, long participantId_,
          const ContextOp& op_, CompoundDimension* dimension, int flags = 0,
          int initialRefCount = 1)
           : AsynchronousToken(
@@ -886,7 +886,7 @@ namespace intense {
         {}
 
         ApplyToken
-        (long long clientSequence, long long participantId_,
+        (long clientSequence, long participantId_,
          const ContextOp* op_, CompoundDimension* dimension, int flags = 0,
          int initialRefCount = 1)
           : AsynchronousToken(
@@ -937,7 +937,7 @@ namespace intense {
 
       protected:
 
-        long long participantId;
+        long participantId;
 
       public:
 
@@ -947,7 +947,7 @@ namespace intense {
         {}
 
         ClearToken
-        (long long clientSequence, long long participantId_,
+        (long clientSequence, long participantId_,
          CompoundDimension* dimension, int flags = 0, int initialRefCount = 1)
           : AsynchronousToken(
               dimension, clientSequence, flags, initialRefCount
@@ -1042,7 +1042,7 @@ namespace intense {
 
       void lockedAndLoggedSend
       (AEPClient::Token& token, const char* location,
-       long long serverSequence, long long clientSequence);
+       long serverSequence, long clientSequence);
 
       void leaveAllParticipants
       ();
@@ -1255,7 +1255,7 @@ namespace intense {
         // add 8 bytes to these tokens:
         union {
           int id;
-          long long sequence;
+          long sequence;
           CompoundDimension* compoundDimension;
           std::string* text;
           std::string* errorText;
@@ -1352,7 +1352,7 @@ namespace intense {
         }
 
         int setSequence
-        (long long sequence)
+        (long sequence)
         {
           aetpValue.sequence = sequence;
           return type = SEQUENCE;
@@ -1402,11 +1402,11 @@ namespace intense {
     private:
 
       void readSequence
-      (LexerToken& lexerToken, long long& dest, const char* sequenceName,
+      (LexerToken& lexerToken, long& dest, const char* sequenceName,
        LexerToken::Type inTokenType);
 
       void readParticipantId
-      (LexerToken& lexerToken, long long& dest, LexerToken::Type inTokenType);
+      (LexerToken& lexerToken, long& dest, LexerToken::Type inTokenType);
 
       void throwBadLexerToken
       (LexerToken& token, LexerToken::Type inTokenType);

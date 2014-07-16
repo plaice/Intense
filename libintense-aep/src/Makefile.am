@@ -39,6 +39,5 @@ libintense_aep_la_SOURCES = $(THE_SOURCES)
 
 AETPLexer.cpp : AETPLexer.lpp
 	$(LEXCOMPILE) `test -f $< || echo '$(srcdir)/'`$<
-	sed -e '/^#/ s|aetp_yy\.cc|$@|' -f $(CORRECT_FLEX) \
-          lex.aetp_yy.cc >$@
+	sed -e '/^#/ s|lex\.aetp_yy\.cc|$@|' < lex.aetp_yy.cc >$@
 	rm -f lex.aetp_yy.cc

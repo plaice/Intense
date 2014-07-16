@@ -26,11 +26,11 @@
 
 #include <intense.hpp>
 #include <queue>
+#include <FlexLexer.h>
+#include "AETPLexer.hpp"
 #include "AEPCommon.hpp"
 #include "AEPClient.hpp"
 #include "AEPServer.hpp"
-#include "FlexLexer.hpp"
-#include "AETPLexer.hpp"
 
 
 using namespace std;
@@ -188,7 +188,7 @@ AETPServer::Token* AETPServer::receive
     throw AEPException("Received VOID AETPServer::LexerToken");
   case LexerToken::SYNCH:
     {
-      long long clientSequence;
+      long clientSequence;
 
       // Client sequence:
       readSequence(lexerToken, clientSequence, "client sequence", type);
@@ -200,7 +200,7 @@ AETPServer::Token* AETPServer::receive
     break;
   case LexerToken::CLIENT_DISCONNECT:
     {
-      long long clientSequence;
+      long clientSequence;
 
       // Client sequence:
       readSequence(lexerToken, clientSequence, "client sequence", type);
@@ -212,8 +212,8 @@ AETPServer::Token* AETPServer::receive
     break;
   case LexerToken::JOIN:
     {
-      long long clientSequence;
-      long long participantId;
+      long clientSequence;
+      long participantId;
       bool notify = false;
       CompoundDimension* dimension = NULL;
       int newTokenType;
@@ -258,8 +258,8 @@ AETPServer::Token* AETPServer::receive
     break;
   case LexerToken::LEAVE:
     {
-      long long clientSequence;
-      long long participantId;
+      long clientSequence;
+      long participantId;
 
       // Client sequence:
       readSequence(lexerToken, clientSequence, "client sequence", type);
@@ -273,8 +273,8 @@ AETPServer::Token* AETPServer::receive
     break;
   case LexerToken::ASSIGN:
     {
-      long long clientSequence;
-      long long participantId;
+      long clientSequence;
+      long participantId;
       CompoundDimension* dimension = NULL;
       Context* context = NULL;
       int newTokenType;
@@ -353,8 +353,8 @@ AETPServer::Token* AETPServer::receive
     break;
   case LexerToken::APPLY:
     {
-      long long clientSequence;
-      long long participantId;
+      long clientSequence;
+      long participantId;
       CompoundDimension* dimension = NULL;
       ContextOp* op = NULL;
       int newTokenType;
@@ -433,8 +433,8 @@ AETPServer::Token* AETPServer::receive
     break;
   case LexerToken::CLEAR:
     {
-      long long clientSequence;
-      long long participantId;
+      long clientSequence;
+      long participantId;
       CompoundDimension* dimension = NULL;
       int newTokenType;
       bool haveSeenDimension = false;
@@ -525,7 +525,7 @@ AETPServer::Token* AETPServer::receive
 
 
 void AETPServer::readSequence
-(LexerToken& lexerToken, long long& dest, const char* sequenceName,
+(LexerToken& lexerToken, long& dest, const char* sequenceName,
  LexerToken::Type inTokenType)
 {
   ((AETPLexer*)lexer)->integersType = AETPLexer::SEQUENCE;
@@ -552,7 +552,7 @@ void AETPServer::readSequence
 
 
 void AETPServer::readParticipantId
-(LexerToken& lexerToken, long long& dest, LexerToken::Type inTokenType)
+(LexerToken& lexerToken, long& dest, LexerToken::Type inTokenType)
 {
   ((AETPLexer*)lexer)->integersType = AETPLexer::ID;
   switch (lexer->getToken(lexerToken)) {

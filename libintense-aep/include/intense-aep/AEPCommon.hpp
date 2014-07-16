@@ -70,7 +70,7 @@ namespace intense {
 
         friend class AEPCommon;
 
-        long long id;
+        long id;
 
       protected:
 
@@ -84,7 +84,7 @@ namespace intense {
         {}
 
         Participant
-        (long long id_, io::Log* log_, io::Log::Priority logLevel_)
+        (long id_, io::Log* log_, io::Log::Priority logLevel_)
           : intense::Participant(), id(id_), log(log_), logLevel(logLevel_)
         {}
 
@@ -94,7 +94,7 @@ namespace intense {
         ()
         {}
 
-        long long getId
+        long getId
         ()
         {
           return id;
@@ -154,9 +154,9 @@ namespace intense {
 
       friend class Participant;
 
-      std::map<long long, Participant*> participants;
+      std::map<long, Participant*> participants;
 
-      long long nextParticipantId;
+      long nextParticipantId;
 
       io::Log* log;
 
@@ -181,12 +181,12 @@ namespace intense {
       ();
 
       void setParticipantId
-      (Participant& participant, long long id)
+      (Participant& participant, long id)
       {
         participant.id = id;
       }
 
-      long long addParticipant
+      long addParticipant
       (Participant& participant);
 
       void addParticipantWithId
@@ -195,10 +195,10 @@ namespace intense {
     public:
 
       Participant& getParticipant
-      (long long participantId, const char* location);
+      (long participantId, const char* location);
 
       Participant& getParticipant
-      (long long participantId)
+      (long participantId)
       {
         return getParticipant(participantId, "AEPCommon::getParticipant");
       }

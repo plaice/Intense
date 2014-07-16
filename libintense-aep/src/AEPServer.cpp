@@ -26,6 +26,8 @@
 #include <intense/container_stringtok.hpp>
 #include <intense.hpp>
 #include <queue>
+#include <FlexLexer.h>
+#include "AETPLexer.hpp"
 #include "AEPCommon.hpp"
 #include "AEPClient.hpp"
 #include "AEPServer.hpp"
@@ -265,8 +267,8 @@ void AEPServer::AEther::unlock
 void AEPServer::AEther::processToken
 (AEPServer::Token& token)
 {
-  long long serverSequence = token.getServerSequence();
-  long long clientSequence = token.getClientSequence();
+  long serverSequence = token.getServerSequence();
+  long clientSequence = token.getClientSequence();
 
   if ((log != NULL)&&(logLevel >= Log::DEBUG)) {
     *log << Log::DEBUG << "AEPServer::AEther: Received token: ";
@@ -746,7 +748,7 @@ AEPServer::AsynchronousToken::AsynchronousToken
 
 
 AEPServer::AsynchronousToken::AsynchronousToken
-(CompoundDimension* dimension_, long long clientSequence, int flags_,
+(CompoundDimension* dimension_, long clientSequence, int flags_,
  int initialRefCount)
   : Token(clientSequence),
     dimension(
@@ -1407,7 +1409,7 @@ AEPServer::AEther::Origin& AEPServer::Participant::getNotificationOrigin
 }
 
 
-long long AEPServer::Participant::assign
+long AEPServer::Participant::assign
 (Context const&, CompoundDimension const*)
 {
   throw AEPException(
@@ -1417,7 +1419,7 @@ long long AEPServer::Participant::assign
 }
 
 
-long long AEPServer::Participant::apply
+long AEPServer::Participant::apply
 (intense::ContextOp const&, intense::CompoundDimension const*)
 {
   throw AEPException(
@@ -1427,7 +1429,7 @@ long long AEPServer::Participant::apply
 }
 
 
-long long AEPServer::Participant::clear
+long AEPServer::Participant::clear
 (intense::CompoundDimension const*)
 {
   throw AEPException(
@@ -2046,7 +2048,7 @@ void AEPServer::lockedSend
 
 void AEPServer::lockedAndLoggedSend
 (AEPClient::Token& replyToken, const char* location,
- long long serverSequence, long long clientSequence)
+ long serverSequence, long clientSequence)
 {
   try {
     if ((log != NULL)&&(logLevel >= Log::DEBUG1)) {
@@ -2078,7 +2080,7 @@ void AEPServer::lockedAndLoggedSend
 void AEPServer::leaveAllParticipants
 ()
 {
-  map<long long, AEPCommon::Participant*>::iterator participantItr;
+  map<long, AEPCommon::Participant*>::iterator participantItr;
 
   for (participantItr = participants.begin();
        participantItr != participants.end(); participantItr++) {

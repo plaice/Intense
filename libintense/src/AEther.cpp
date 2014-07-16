@@ -77,7 +77,7 @@ void AEtherParticipant::join
 }
 
 
-long long int AEtherParticipant::assign
+long int AEtherParticipant::assign
 (const Context& context, const CompoundDimension* dim)
 {
   if (aether != NULL) {
@@ -93,7 +93,7 @@ long long int AEtherParticipant::assign
 }
 
 
-long long int AEtherParticipant::apply
+long int AEtherParticipant::apply
 (const ContextOp& op, const CompoundDimension* dim)
 {
   if (aether == NULL) {
@@ -109,7 +109,7 @@ long long int AEtherParticipant::apply
 }
 
 
-long long int AEtherParticipant::clear
+long int AEtherParticipant::clear
 (const CompoundDimension* dim)
 {
   if (aether == NULL) {

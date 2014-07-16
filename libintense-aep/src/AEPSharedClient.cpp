@@ -25,6 +25,8 @@
 
 #include <intense.hpp>
 #include <queue>
+#include <FlexLexer.h>
+#include "AETPLexer.hpp"
 #include "AEPCommon.hpp"
 #include "AEPClient.hpp"
 #include "AEPServer.hpp"

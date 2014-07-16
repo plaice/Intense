@@ -77,10 +77,10 @@ AEPCommon::~AEPCommon
 }
 
 
-long long AEPCommon::addParticipant
+long AEPCommon::addParticipant
 (Participant& participant)
 {
-  long long newId = nextParticipantId++;
+  long newId = nextParticipantId++;
 
   participants[newId] = &participant;
   return participant.id = newId;
@@ -90,9 +90,9 @@ long long AEPCommon::addParticipant
 void AEPCommon::addParticipantWithId
 (Participant& participant, const char* location)
 {
-  pair<map<long long, Participant*>::iterator, bool> insertRC =
-    participants.insert(map<long long, Participant*>::value_type(
-      participant.id, map<long long, Participant*>::mapped_type()
+  pair<map<long, Participant*>::iterator, bool> insertRC =
+    participants.insert(map<long, Participant*>::value_type(
+      participant.id, map<long, Participant*>::mapped_type()
     ));
 
   if (!insertRC.second) {
@@ -107,9 +107,9 @@ void AEPCommon::addParticipantWithId
 
 
 AEPCommon::Participant& AEPCommon::getParticipant
-(long long participantId, const char* location)
+(long participantId, const char* location)
 {
-  map<long long, Participant*>::iterator participantItr =
+  map<long, Participant*>::iterator participantItr =
     participants.find(participantId);
 
   if (participantItr == participants.end()) {
@@ -126,7 +126,7 @@ AEPCommon::Participant& AEPCommon::getParticipant
 void AEPCommon::removeParticipant
 (Participant& participant, const char* location)
 {
-  map<long long, Participant*>::iterator participantItr =
+  map<long, Participant*>::iterator participantItr =
     participants.find(participant.id);
 
   if (participantItr == participants.end()) {
@@ -144,7 +144,7 @@ void AEPCommon::removeParticipant
 void AEPCommon::removeAllParticipants
 (bool deleteParticipants)
 {
-  map<long long, Participant*>::iterator participantItr;
+  map<long, Participant*>::iterator participantItr;
 
   for (participantItr = participants.begin();
        participantItr != participants.end(); participantItr++) {

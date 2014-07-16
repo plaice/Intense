@@ -120,13 +120,13 @@ namespace intense {
     virtual void join
     (AEther& a);
 
-    virtual long long assign
+    virtual long assign
     (const Context& context, const CompoundDimension* dim);
 
-    virtual long long apply
+    virtual long apply
     (const ContextOp& op, const CompoundDimension* dim);
 
-    virtual long long clear
+    virtual long clear
     (const CompoundDimension* dim);
 
     AEther& getNode

@@ -32,6 +32,8 @@
 #include <iostream>
 #include <errno.h>
 #include <intense.hpp>
+#include <FlexLexer.h>
+#include "AETPLexer.hpp"
 #include "AEPCommon.hpp"
 #include "AEPClient.hpp"
 #include "AEPServer.hpp"
@@ -839,7 +841,7 @@ void AEPClient::ErrorToken::print
 }
 
 
-long long AEPClient::Participant::join
+long AEPClient::Participant::join
 (AEPClient& newClient, bool notify, const CompoundDimension* dimension,
  pthread_cond_t* optionalBlockCondition)
 {
@@ -847,7 +849,7 @@ long long AEPClient::Participant::join
 }
 
 
-long long AEPClient::Participant::join
+long AEPClient::Participant::join
 (AEPClient& newClient, bool notify, const char* dim,
  pthread_cond_t* optionalBlockCondition)
 {
@@ -857,7 +859,7 @@ long long AEPClient::Participant::join
 }
 
 
-long long AEPClient::Participant::join
+long AEPClient::Participant::join
 (bool notify, const CompoundDimension* dimension,
  pthread_cond_t* optionalBlockCondition)
 {
@@ -865,7 +867,7 @@ long long AEPClient::Participant::join
 }
 
 
-long long AEPClient::Participant::join
+long AEPClient::Participant::join
 (bool notify, const char* dim, pthread_cond_t* optionalBlockCondition)
 {
   CompoundDimension dimension(dim);
@@ -874,7 +876,7 @@ long long AEPClient::Participant::join
 }
 
 
-long long AEPClient::Participant::join
+long AEPClient::Participant::join
 (AEPClient* newClient, bool notify, const CompoundDimension* dimension,
  pthread_cond_t* blockCondition)
 {
@@ -901,11 +903,11 @@ long long AEPClient::Participant::join
 }
 
 
-long long AEPClient::Participant::leave
+long AEPClient::Participant::leave
 (pthread_cond_t* blockCondition)
 {
   const char* location = "AEPClient::Participant::leave";
-  long long returnValue;
+  long returnValue;
 
   checkValidClientAndJoined(location);
   client->lock();
@@ -918,7 +920,7 @@ long long AEPClient::Participant::leave
 }
 
 
-long long AEPClient::Participant::assign
+long AEPClient::Participant::assign
 (const Context& context, const char* dim,
  int flags, pthread_cond_t* blockCondition)
 {
@@ -928,7 +930,7 @@ long long AEPClient::Participant::assign
 }
 
 
-long long AEPClient::Participant::assign
+long AEPClient::Participant::assign
 (const Context& context, const CompoundDimension* dim,
  int flags, pthread_cond_t* blockCondition)
 {
@@ -944,7 +946,7 @@ long long AEPClient::Participant::assign
 }
 
 
-long long AEPClient::Participant::apply
+long AEPClient::Participant::apply
 (const ContextOp& op, const char* dim,
  int flags, pthread_cond_t* blockCondition)
 {
@@ -954,7 +956,7 @@ long long AEPClient::Participant::apply
 }
 
 
-long long AEPClient::Participant::apply
+long AEPClient::Participant::apply
 (const ContextOp& op, const CompoundDimension* dim,
  int flags, pthread_cond_t* blockCondition)
 {
@@ -970,7 +972,7 @@ long long AEPClient::Participant::apply
 }
 
 
-long long AEPClient::Participant::clear
+long AEPClient::Participant::clear
 (const char* dim, int flags, pthread_cond_t* blockCondition)
 {
   CompoundDimension dimension(dim);
@@ -979,7 +981,7 @@ long long AEPClient::Participant::clear
 }
 
 
-long long AEPClient::Participant::clear
+long AEPClient::Participant::clear
 (const CompoundDimension* dim, int flags, pthread_cond_t* blockCondition)
 {
   checkValidClientAndJoined("AEPClient::Participant::clear");
@@ -993,7 +995,7 @@ long long AEPClient::Participant::clear
 }
 
 
-long long AEPClient::Participant::synch
+long AEPClient::Participant::synch
 (pthread_cond_t* blockCondition)
 {
   client->lock();
@@ -1005,7 +1007,7 @@ long long AEPClient::Participant::synch
 
 
 void AEPClient::Participant::synch
-(long long serverSequence, pthread_cond_t* blockCondition)
+(long serverSequence, pthread_cond_t* blockCondition)
 {
   client->lock();
   if (client->getServerSequence() >= serverSequence) {
@@ -1036,7 +1038,7 @@ void AEPClient::Participant::checkValidClientAndJoined
 
 
 AEPClient::SequenceBinder::SequenceBinder
-(long long sequence_, bool terminate_, pthread_cond_t* condition_)
+(long sequence_, bool terminate_, pthread_cond_t* condition_)
   : sequence(sequence_), terminate(terminate_), token(NULL),
     allocatedCondition(false), condition(condition_)
 {
@@ -1059,7 +1061,7 @@ AEPClient::SequenceBinder::~SequenceBinder
 
 
 AEPClient::ReplyToken* AEPClient::SequenceBinderMap::wait
-(long long sequence, bool terminate, pthread_cond_t* condition)
+(long sequence, bool terminate, pthread_cond_t* condition)
 {
   ReplyToken* returnValue;
   SequenceBinder* binder = new SequenceBinder(sequence, terminate, condition);
@@ -1075,7 +1077,7 @@ AEPClient::ReplyToken* AEPClient::SequenceBinderMap::wait
 bool AEPClient::SequenceBinderMap::resumeAll
 ()
 {
-  map<long long, SequenceBinder*>::iterator itr;
+  map<long, SequenceBinder*>::iterator itr;
   bool keepRunning = true;
 
   for (itr = begin(); itr != end(); itr++) {
@@ -1092,7 +1094,7 @@ bool AEPClient::SequenceBinderMap::resumeAll
 bool AEPClient::SequenceBinderMap::resume
 (ReplyToken& token)
 {
-  map<long long, SequenceBinder*>::iterator itr;
+  map<long, SequenceBinder*>::iterator itr;
   bool keepRunning = true;
 
   if ((itr = find(token.getClientSequence())) == end()) {
@@ -1114,9 +1116,9 @@ bool AEPClient::SequenceBinderMap::resume
 
 
 bool AEPClient::SequenceBinderMap::resumeUntil
-(long long sequence)
+(long sequence)
 {
-  map<long long, SequenceBinder*>::iterator itr = begin();
+  map<long, SequenceBinder*>::iterator itr = begin();
   bool keepRunning = true;
 
   while ((itr != end())&&(itr->second->sequence <= sequence)) {
@@ -1154,15 +1156,15 @@ AEPClient::AEPClient
 
 
 // Assumes client has been locked and unlocks it before returning:
-long long AEPClient::transaction
+long AEPClient::transaction
 (AEPCommon::Token* outgoing_, bool allowDeny, bool terminate,
  pthread_cond_t* blockCondition)
 {
-  long long serverSequence = -1;
+  long serverSequence = -1;
   AEPServer::Token& outgoing = *((AEPServer::Token*)outgoing_);
   Token* reply = NULL;
   const char* typeString = outgoing.getTypeString();
-  long long clientSequence = outgoing.getClientSequence();
+  long clientSequence = outgoing.getClientSequence();
 
   try {
     if ((log != NULL)&&(logLevel >= Log::DEBUG1)) {
@@ -1299,7 +1301,7 @@ AEPClient::~AEPClient
 }
 
 
-long long AEPClient::assign
+long AEPClient::assign
 (const Context& context, const CompoundDimension* dim, int flags,
  pthread_cond_t* blockCondition)
 {
@@ -1313,7 +1315,7 @@ long long AEPClient::assign
 }
 
 
-long long AEPClient::apply
+long AEPClient::apply
 (const ContextOp& op, const CompoundDimension* dim, int flags,
  pthread_cond_t* blockCondition)
 {
@@ -1327,7 +1329,7 @@ long long AEPClient::apply
 }
 
 
-long long AEPClient::clear
+long AEPClient::clear
 (const CompoundDimension* dim, int flags, pthread_cond_t* blockCondition)
 {
   lock();
@@ -1340,7 +1342,7 @@ long long AEPClient::clear
 }
 
 
-long long AEPClient::synch
+long AEPClient::synch
 (pthread_cond_t* blockCondition)
 {
   lock();
@@ -1351,7 +1353,7 @@ long long AEPClient::synch
 
 
 void AEPClient::synch
-(long long serverSequence, pthread_cond_t* blockCondition)
+(long serverSequence, pthread_cond_t* blockCondition)
 {
   lock();
   serverSequenceBinderMap.wait(serverSequence, blockCondition);
@@ -1359,7 +1361,7 @@ void AEPClient::synch
 }
 
 
-long long AEPClient::disconnect
+long AEPClient::disconnect
 (pthread_cond_t* blockCondition)
 {
   lock();
@@ -1424,7 +1426,7 @@ void AEPClient::stop
 
 
 AEPClient::ReplyToken* AEPClient::waitForReply
-(long long clientSequence, const char* location, bool terminate,
+(long clientSequence, const char* location, bool terminate,
  pthread_cond_t* cond)
 {
   ReplyToken* reply;

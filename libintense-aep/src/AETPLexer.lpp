@@ -42,10 +42,10 @@
 #include <stdlib.h>
 #include <intense-io.hpp>
 #include <intense.hpp>
+#include "AETPLexer.hpp"
 #include "AEPCommon.hpp"
 #include "AEPClient.hpp"
 #include "AEPServer.hpp"
-#include "AETPLexer.hpp"
 
 
 using namespace std;

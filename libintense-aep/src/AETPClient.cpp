@@ -26,10 +26,10 @@
 
 #include <intense.hpp>
 #include <queue>
+#include <FlexLexer.h>
+#include "AETPLexer.hpp"
 #include "AEPCommon.hpp"
 #include "AEPClient.hpp"
-#include "FlexLexer.hpp"
-#include "AETPLexer.hpp"
 
 
 using namespace std;
@@ -193,7 +193,7 @@ AETPClient::Token* AETPClient::receive
     throw AEPException("Received VOID AETPClient::LexerToken");
   case LexerToken::SERVER_DISCONNECT:
     {
-      long long serverSequence;
+      long serverSequence;
 
       // Server sequence:
       readSequence(lexerToken, serverSequence, "server sequence", type);
@@ -206,7 +206,7 @@ AETPClient::Token* AETPClient::receive
     break;
   case LexerToken::NOTIFY:
     {
-      long long serverSequence;
+      long serverSequence;
       int targetsSize;
       int nodesSize;
       bool haveSeenAssign = false;
@@ -229,7 +229,7 @@ AETPClient::Token* AETPClient::receive
         }
         nodesSize = lexerToken.aetpValue.count;
         for (int i = 0; i < targetsSize; i++) {
-          long long participantId;
+          long participantId;
           int nodeIndex;
           CompoundDimension* dimension = NULL;
           bool dimensionIsExternal;
@@ -375,8 +375,8 @@ AETPClient::Token* AETPClient::receive
   case LexerToken::ACK:
   case LexerToken::DENY:
     {
-      long long clientSequence;
-      long long serverSequence;
+      long clientSequence;
+      long serverSequence;
       string* message = NULL;
 
       // Server sequence:
@@ -428,7 +428,7 @@ AETPClient::Token* AETPClient::receive
 
 
 void AETPClient::readSequence
-(LexerToken& lexerToken, long long& dest, const char* sequenceName,
+(LexerToken& lexerToken, long& dest, const char* sequenceName,
  LexerToken::Type inTokenType)
 {
   ((AETPLexer*)lexer)->integersType = AETPLexer::SEQUENCE;
@@ -455,7 +455,7 @@ void AETPClient::readSequence
 
 
 void AETPClient::readParticipantId
-(LexerToken& lexerToken, long long& dest, LexerToken::Type inTokenType)
+(LexerToken& lexerToken, long& dest, LexerToken::Type inTokenType)
 {
   ((AETPLexer*)lexer)->integersType = AETPLexer::ID;
   switch (lexer->getToken(lexerToken)) {
