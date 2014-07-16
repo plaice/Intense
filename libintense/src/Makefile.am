@@ -9,7 +9,7 @@ INCDIR = $(srcdir)/../include
 
 INCSUBDIR = $(srcdir)/../include/intense
 
-INCLUDES = @INCLUDE_PREFIX@ -I$(INCDIR) -I$(INCSUBDIR) -I$(srcdir) -I.
+AM_CPPFLAGS = @INCLUDE_PREFIX@ -I$(INCDIR) -I$(INCSUBDIR) -I$(srcdir) -I.
 
 AM_YFLAGS = -d
 

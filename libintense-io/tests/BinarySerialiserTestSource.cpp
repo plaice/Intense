@@ -51,8 +51,8 @@ int main
   int testCharArrayLength = strlen(testCharArray) + 1;
   int testInt0 = -123;
   int testInt1 = 123;
-  long long testLongLong0 = -12345678910LL;
-  long long testLongLong1 = 12345678910LL;
+  long testLongLong0 = -12345678910LL;
+  long testLongLong1 = 12345678910LL;
   unsigned int testUnsignedInt = 234;
   short int testShortInt0 = -345;
   short int testShortInt1 = 345;

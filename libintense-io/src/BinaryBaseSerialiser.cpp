@@ -209,28 +209,28 @@ void BinaryBaseSerialiser::in
 
 
 void BinaryBaseSerialiser::out
-(long long int i, ostream& os)
+(long int i, ostream& os)
 {
   os.write((char*)&i, sizeof(i));
 }
 
 
 void BinaryBaseSerialiser::in
-(long long int& i, istream& is)
+(long int& i, istream& is)
 {
   is.read((char*)&i, sizeof(i));
 }
 
 
 void BinaryBaseSerialiser::out
-(unsigned long long int i, ostream& os)
+(unsigned long int i, ostream& os)
 {
   os.write((char*)&i, sizeof(i));
 }
 
 
 void BinaryBaseSerialiser::in
-(unsigned long long int& i, istream& is)
+(unsigned long int& i, istream& is)
 {
   is.read((char*)&i, sizeof(i));
 }

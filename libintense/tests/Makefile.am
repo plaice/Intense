@@ -10,8 +10,8 @@ check_PROGRAMS = $(TESTS)
 
 AM_LDFLAGS = @LINK_PREFIX@ -lpthread -lintense-io -static
 
-INCLUDES = @INCLUDE_PREFIX@ -I$(srcdir)/../include \
-           -I$(srcdir)/../include/intense
+AM_CPPFLAGS = @INCLUDE_PREFIX@ -I$(srcdir)/../include \
+              -I$(srcdir)/../include/intense
 
 OTHER_SOURCES = IntenseTest.cpp IntenseTest.hpp
 

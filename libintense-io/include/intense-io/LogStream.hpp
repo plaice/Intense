@@ -29,6 +29,7 @@
 #include "intense_io_config.hpp"
 
 
+#include <cstring>
 #include <pthread.h>
 #include <sys/timeb.h>
 #include <fstream>

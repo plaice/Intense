@@ -83,9 +83,8 @@ DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(top_srcdir)/include/intense-io/intense_io_config.hpp.in \
 	COPYING config/config.guess config/config.sub config/depcomp \
-	install-sh config/install-sh missing config/missing \
-	config/ylwrap config/ltmain.sh \
-	$(top_srcdir)/config/config.guess \
+	config/install-sh config/missing config/ylwrap \
+	config/ltmain.sh $(top_srcdir)/config/config.guess \
 	$(top_srcdir)/config/config.sub \
 	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
 	$(top_srcdir)/config/missing
