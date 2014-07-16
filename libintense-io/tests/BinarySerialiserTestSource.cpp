@@ -27,6 +27,7 @@
 using namespace std;
 
 
+#include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
 #include <iostream>

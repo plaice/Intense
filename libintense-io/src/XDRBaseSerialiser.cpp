@@ -244,7 +244,7 @@ void XDRBaseSerialiser::in
 
 
 void XDRBaseSerialiser::out
-(long long int i, ostream& os)
+(long int i, ostream& os)
 {
 #if HAVE_XDR_HYPER
   xdr_setpos(&encoder, 0);
@@ -266,7 +266,7 @@ void XDRBaseSerialiser::out
 
 
 void XDRBaseSerialiser::in
-(long long int& i, istream& is)
+(long int& i, istream& is)
 {
 #if HAVE_XDR_HYPER
   xdr_setpos(&decoder, 0);
@@ -289,7 +289,7 @@ void XDRBaseSerialiser::in
 
 
 void XDRBaseSerialiser::out
-(unsigned long long int i, ostream& os)
+(unsigned long int i, ostream& os)
 {
 #if HAVE_XDR_U_HYPER
   xdr_setpos(&encoder, 0);
@@ -311,7 +311,7 @@ void XDRBaseSerialiser::out
 
 
 void XDRBaseSerialiser::in
-(unsigned long long int& i, istream& is)
+(unsigned long int& i, istream& is)
 {
 #if HAVE_XDR_U_HYPER
   xdr_setpos(&decoder, 0);

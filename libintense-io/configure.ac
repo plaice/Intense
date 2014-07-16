@@ -3,9 +3,10 @@
 
 AC_PREREQ(2.59)
 AC_INIT(Libintense-io, [0.1.0], gnu-AT-hackomatic-DOT-net)
-AM_INIT_AUTOMAKE
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADER([include/intense-io/intense_io_config.hpp])
+AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE
 
 # Checks for programs.
 AC_PROG_YACC
@@ -15,8 +16,7 @@ AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_RANLIB
-AC_PROG_LIBTOOL
+LT_INIT
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lfl':

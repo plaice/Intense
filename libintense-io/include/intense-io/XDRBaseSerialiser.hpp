@@ -85,16 +85,16 @@ namespace intense {
       (short unsigned int& i, std::istream& is);
 
       virtual void out
-      (long long int i, std::ostream& os);
+      (long int i, std::ostream& os);
 
       virtual void in
-      (long long int& i, std::istream& is);
+      (long int& i, std::istream& is);
 
       virtual void out
-      (unsigned long long int i, std::ostream& os);
+      (unsigned long int i, std::ostream& os);
 
       virtual void in
-      (unsigned long long int& i, std::istream& is);
+      (unsigned long int& i, std::istream& is);
 
       void out
       (char c, std::ostream& os);

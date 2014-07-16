@@ -6,7 +6,7 @@
 
 INCDIR = $(srcdir)/../include
 INCSUBDIR = $(srcdir)/../include/intense-io
-INCLUDES = -I$(INCDIR) -I$(INCSUBDIR) -I$(srcdir) -I.
+AM_CPPFLAGS = -I$(INCDIR) -I$(INCSUBDIR) -I$(srcdir) -I.
 
 THE_SOURCES = \
     \

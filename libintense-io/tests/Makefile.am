@@ -8,7 +8,7 @@ check_PROGRAMS = $(TESTS)
 
 AM_LDFLAGS = -lpthread @XDR_LIBS@ -static
 
-INCLUDES = -I$(srcdir)/../include -I$(srcdir)/../include/intense
+AM_CPPFLAGS = -I$(srcdir)/../include -I$(srcdir)/../include/intense
 
 OTHER_SOURCES = IntenseIOTest.cpp IntenseIOTest.hpp Test.cpp Test.hpp
 
@@ -23,7 +23,8 @@ BinarySerialiserTestSource_LDADD = ../src/libintense-io.la
 nobase_include_HEADERS = intense-io/CompatibleArchitecture.hpp
 
 intense-io/CompatibleArchitecture.hpp : BinarySerialiserTestSource.out
-	./find_compatible_arch.sh $< > $@
+	mkdir -p intense-io
+	$(srcdir)/find_compatible_arch.sh "$(srcdir)" $< > $@
 
 BinarySerialiserTestSource.out : BinarySerialiserTestSource
 	./BinarySerialiserTestSource
