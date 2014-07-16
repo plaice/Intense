@@ -8,7 +8,7 @@ check_PROGRAMS = $(TESTS)
 
 AM_LDFLAGS = @LINK_PREFIX@ @LIBS@ -static
 
-INCLUDES = @INCLUDE_PREFIX@ -I$(srcdir)/../include \
+AM_CPPFLAGS = @INCLUDE_PREFIX@ -I$(srcdir)/../include \
            -I$(srcdir)/../include/intense
 
 OTHER_SOURCES = IntenseAEPTest.cpp IntenseAEPTest.hpp Test.cpp Test.hpp

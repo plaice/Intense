@@ -3,10 +3,11 @@
 
 AC_PREREQ(2.59)
 AC_INIT(Libintense-aep, [0.1.0], gnu-AT-hackomatic-DOT-net)
-AM_INIT_AUTOMAKE
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADER([include/intense-aep/intense_aep_config.hpp])
+AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE
 
 AC_LANG_CPLUSPLUS
 
@@ -18,8 +19,7 @@ AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_RANLIB
-AC_PROG_LIBTOOL
+LT_INIT
 
 if test "$prefix" != NONE; then
 AC_SUBST(INCLUDE_PREFIX, "-I$prefix/include")
