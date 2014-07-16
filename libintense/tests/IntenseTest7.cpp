@@ -103,7 +103,7 @@ public:
   void readAll
   (BaseSerialiser* serialiser, istream& in);
 
-  void IntenseTest7::usage
+  void usage
   ();
 
   void getOpts

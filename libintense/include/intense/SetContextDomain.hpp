@@ -114,7 +114,7 @@ namespace intense {
     (const Context* context, bool canReplace = true);
 
     virtual void remove
-    (const Context* context)
+    (Context* context)
     {
       erase((Context*)context);
     }

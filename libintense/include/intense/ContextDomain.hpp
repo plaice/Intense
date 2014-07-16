@@ -178,7 +178,7 @@ namespace intense {
 
     // Returns true if we actually removed an item with the given context:
     virtual void remove
-    (const Context* context) = 0;
+    (Context* context) = 0;
 
     virtual void clear
     () = 0;

@@ -59,14 +59,14 @@ namespace intense {
     }
 
     bool remove
-    (const Context& context) const
+    (Context& context)
     {
       return domain.remove(&context);
     }
 
     template <class ContextConstructorArg>
     bool remove
-    (const ContextConstructorArg& context)
+    (ContextConstructorArg& context)
     {
       Context target(context);
 
