@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.58)
-AC_INIT(Libintense, [0.1.0], gnu-AT-hackomatic-DOT-net)
+AC_INIT(Libintense, [0.1.0], cartesianprogramming-AT-gmail-DOT-com)
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADER([include/intense/intense_config.hpp])
 AC_CONFIG_MACRO_DIR([m4])

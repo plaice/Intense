@@ -110,10 +110,11 @@ protected:
 
   void testFit
   (int i, ContextDomain& domain, Context& requested,
-   char* expectedCanonical /* NULL if no best fit expected */);
+   std::string expectedCanonical /* "" if no best fit expected */);
 
   void testNearFit
-  (int i, ContextDomain& domain, Context& requested, char* expectedCanonicals);
+  (int i, ContextDomain& domain, Context& requested,
+   std::string expectedCanonicals);
 
 public:
 

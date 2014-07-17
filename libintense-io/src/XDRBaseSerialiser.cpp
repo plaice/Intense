@@ -42,8 +42,8 @@ using namespace std;
 using namespace intense::io;
 
 
-static char* xdrOutError = "Outbound serialisation of base type failed";
-static char* xdrInError = "Inbound deserialisation of base type failed";
+static std::string xdrOutError = "Outbound serialisation of base type failed";
+static std::string xdrInError = "Inbound deserialisation of base type failed";
 
 
 XDRBaseSerialiser::XDRBaseSerialiser

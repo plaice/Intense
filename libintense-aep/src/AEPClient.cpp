@@ -1589,11 +1589,10 @@ void* AEPClient::receiverMain
         }
         running = false;
       } catch (...) {
-        char* message = "AEPClient receiver thread caught unknown exception";
+        std::string message =
+           "AEPClient receiver thread caught unknown exception";
 
-        client->receiverQueue->push(new ClientTerminateToken(
-          *(new string(message))
-        ));
+        client->receiverQueue->push(new ClientTerminateToken(message));
         if ((client->log != NULL)&&(client->logLevel >= Log::ERROR)) {
           *(client->log) << Log::ERROR << message << ENDLOG;
         }

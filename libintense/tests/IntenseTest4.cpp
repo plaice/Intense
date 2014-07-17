@@ -44,10 +44,10 @@ class TestOrigin
 
 public:
 
-  char* name;
+  std::string name;
 
   TestOrigin
-  (char* newName)
+  (std::string newName)
     : Origin(), name(newName)
   {}
 
@@ -79,13 +79,13 @@ protected:
   public:
 
     TestParticipant
-    (char*_name, ostream& _os)
+    (std::string _name, ostream& _os)
       : AEtherParticipant(), name(_name), os(&_os)
     {
     }
 
     TestParticipant
-    (AEther& a, char *_name, ostream& _os)
+    (AEther& a, std::string _name, ostream& _os)
       : AEtherParticipant(a), name(_name), os(&_os)
     {
     }

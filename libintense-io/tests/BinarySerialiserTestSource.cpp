@@ -47,8 +47,8 @@ int main
   ofstream out("BinarySerialiserTestSource.out");
   BinaryBaseSerialiser binarySerialiser;
   string testString = "this is a test";
-  char* testCharArray = "this is also a test";
-  int testCharArrayLength = strlen(testCharArray) + 1;
+  std::string testCharArray = "this is also a test";
+  int testCharArrayLength = strlen((char*)testCharArray.c_str()) + 1;
   int testInt0 = -123;
   int testInt1 = 123;
   long testLongLong0 = -12345678910LL;
@@ -67,7 +67,8 @@ int main
 
   try {
     binarySerialiser.out(testString, out);
-    binarySerialiser.out(testCharArray, testCharArrayLength, out);
+    binarySerialiser.out((char*)testCharArray.c_str(),
+                         testCharArrayLength, out);
     binarySerialiser.out(testInt0, out);
     binarySerialiser.out(testInt1, out);
     binarySerialiser.out(testLongLong0, out);

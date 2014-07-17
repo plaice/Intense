@@ -322,12 +322,13 @@ void IntenseTest::testRefines
 
 
 void IntenseTest::testFit
-(int i, ContextDomain& domain, Context& requested, char* expectedCanonical)
+(int i, ContextDomain& domain, Context& requested,
+ std::string expectedCanonical)
 {
   Context* fit = domain.best(requested);
 
   if (fit) {
-    if (expectedCanonical == NULL) {
+    if (expectedCanonical == "") {
       ostringstream oss;
 
       cout << "Best fit for " << requested.canonical() << ":\n\t"
@@ -341,7 +342,7 @@ void IntenseTest::testFit
            << expectedCanonical << "\n";
       throw IntenseTestException(i, oss.str());
     }
-  } else if (expectedCanonical != NULL) {
+  } else if (expectedCanonical != "") {
     ostringstream oss;
 
     cout << "No best fit for " << requested.canonical() << ".\n"
@@ -352,7 +353,8 @@ void IntenseTest::testFit
 
 
 void IntenseTest::testNearFit
-(int i, ContextDomain& domain, Context& requested, char* expectedCanonicals)
+(int i, ContextDomain& domain, Context& requested,
+ std::string expectedCanonicals)
 {
   string canonicals;
   list<Context*> nearFit;
