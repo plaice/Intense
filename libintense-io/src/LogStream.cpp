@@ -35,8 +35,8 @@
 #include <iostream>
 #include <fstream>
 #include <errno.h>
+#include "intense_io_config.hpp"
 #include "LogStream.hpp"
-
 
 using namespace std;
 using namespace intense::io;

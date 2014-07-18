@@ -35,7 +35,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <intense-io.hpp>
-#include "intense/intense_config.hpp"
 #include "intense/BoundManager.hpp"
 #include "intense/IntenseException.hpp"
 #include "intense/Context.hpp"

@@ -26,9 +26,6 @@
 #define __LOGSTREAM_HPP__
 
 
-#include "intense_io_config.hpp"
-
-
 #include <cstring>
 #include <pthread.h>
 #include <sys/timeb.h>
