@@ -26,12 +26,7 @@
 #ifndef __CONTEXT_HPP__
 #define __CONTEXT_HPP__
 
-
-#include "intense_config.hpp"
-
-
 namespace intense {
-
 
 #if DEFINITELY_HAVE_POSIX_SPINLOCKS
 

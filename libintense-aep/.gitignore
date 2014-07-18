@@ -1,0 +1,8 @@
+/aclocal.m4
+/autom4te.cache/
+/config/
+/configure
+/INSTALL
+/m4/
+Makefile.in
+intense_aep_config.hpp.in

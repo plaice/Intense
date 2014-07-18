@@ -32,6 +32,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <intense-io.hpp>
+#include "intense_config.hpp"
 #include "IntenseException.hpp"
 #include "BoundManager.hpp"
 #include "Context.hpp"

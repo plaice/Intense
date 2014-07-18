@@ -26,7 +26,6 @@
 #ifndef __INTENSE_HPP__
 #define __INTENSE_HPP__
 
-
 #include <list>
 #include <map>
 #include <set>
@@ -50,6 +49,5 @@
 #include "intense/ContextManager.hpp"
 #include "intense/StringUtil.hpp"
 #include "intense/i"
-
 
 #endif // __INTENSE_HPP__
