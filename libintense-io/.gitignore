@@ -1,0 +1,7 @@
+/aclocal.m4
+/autom4te.cache/
+/config/
+/configure
+/m4/
+Makefile.in
+intense_io_config.hpp.in
